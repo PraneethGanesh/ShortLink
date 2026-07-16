@@ -15,7 +15,7 @@ public class User {
     @Column(nullable=false, unique=true)
     private String email;
     @Column(nullable=false)
-    private String passwordHash;
+    private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
     @Enumerated(EnumType.STRING)
@@ -36,8 +36,8 @@ public class User {
         return email;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
+    public String getPassword() {
+        return password;
     }
 
     public Role getRole() {
@@ -84,8 +84,8 @@ public class User {
         this.email = email;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 }
