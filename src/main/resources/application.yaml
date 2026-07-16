@@ -1,18 +1,20 @@
 spring:
   application:
     name: identityservice
+
   datasource:
     url: ${DB_URL:jdbc:mysql://localhost:3306/identity_db?createDatabaseIfNotExist=true}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:root}
 
-    jpa:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
       hibernate:
-        ddl-auto: update
-      show-sql: true
-      properties:
-        hibernate:
-          format_sql: true
+        format_sql: true
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -24,5 +26,6 @@ spring:
           auth: true
           starttls:
             enable: true
+
 server:
   port: 8190

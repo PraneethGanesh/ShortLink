@@ -17,7 +17,7 @@ public class AuthController {
         this.authService = authService;
     }
     @PostMapping("/registration/request")
-    public ResponseEntity<MessageResponse> requestRegistration(
+    public ResponseEntity<String> requestRegistration(
             @Valid @RequestBody RegistrationEmailRequest request
     ) {
         return ResponseEntity.accepted()
