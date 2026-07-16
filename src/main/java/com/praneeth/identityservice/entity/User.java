@@ -8,7 +8,7 @@ import java.time.Instant;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String userId;
     @Column(nullable=false)
     private String name;
@@ -16,10 +16,10 @@ public class User {
     private String email;
     @Column(nullable=false)
     private String passwordHash;
-    @Transient
-    private String confirmPassword;
     @Enumerated(EnumType.STRING)
-    private String role;
+    private Role role;
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
 
     private boolean enabled=true;
     private Instant createdAt=Instant.now();
@@ -40,8 +40,36 @@ public class User {
         return passwordHash;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(UserStatus status) {
+        this.status = status;
     }
 
     public void setUserId(String userId) {
@@ -60,15 +88,4 @@ public class User {
         this.passwordHash = passwordHash;
     }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
 }

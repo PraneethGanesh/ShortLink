@@ -1,10 +1,6 @@
 package com.praneeth.identityservice.controller;
 
-import com.praneeth.identityservice.dto.AuthRequest;
-import com.praneeth.identityservice.dto.AuthResponse;
-import com.praneeth.identityservice.dto.UserRequest;
-import com.praneeth.identityservice.dto.UserResponse;
-import com.praneeth.identityservice.entity.User;
+import com.praneeth.identityservice.dto.RegistrationEmailRequest;
 import com.praneeth.identityservice.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +16,11 @@ public class AuthController {
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
-    @PostMapping("/register")
-    public ResponseEntity<UserResponse> registration (@Valid @RequestBody UserRequest userRequest) {
-        return ResponseEntity.ok(authService.getRegister(userRequest));
+    @PostMapping("/registration/request")
+    public ResponseEntity<MessageResponse> requestRegistration(
+            @Valid @RequestBody RegistrationEmailRequest request
+    ) {
+        return ResponseEntity.accepted()
+                .body(authService.requestRegistration(request));
     }
-//    @PostMapping("/login")
-//    public ResponseEntity<AuthResponse> login (@Valid @RequestBody AuthRequest authRequest) {
-//
-//    }
 }
