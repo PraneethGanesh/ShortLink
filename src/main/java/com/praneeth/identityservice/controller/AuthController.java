@@ -1,5 +1,6 @@
 package com.praneeth.identityservice.controller;
 
+import com.praneeth.identityservice.dto.CompleteRegistrationRequest;
 import com.praneeth.identityservice.dto.RegistrationEmailRequest;
 import com.praneeth.identityservice.service.AuthService;
 import jakarta.validation.Valid;
@@ -22,5 +23,9 @@ public class AuthController {
     ) {
         return ResponseEntity.accepted()
                 .body(authService.requestRegistration(request));
+    }
+    @PostMapping("/registration/complete")
+    public ResponseEntity<String> completeRegistration(@Valid @RequestBody CompleteRegistrationRequest request){
+        return ResponseEntity.ok(authService.completeRegistration(request));
     }
 }
