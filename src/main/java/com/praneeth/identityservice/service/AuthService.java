@@ -1,9 +1,6 @@
 package com.praneeth.identityservice.service;
 
-import com.praneeth.identityservice.dto.CompleteRegistrationRequest;
-import com.praneeth.identityservice.dto.LoginRequest;
-import com.praneeth.identityservice.dto.RegistrationEmailRequest;
-import com.praneeth.identityservice.dto.UserResponse;
+import com.praneeth.identityservice.dto.*;
 import com.praneeth.identityservice.entity.RegistrationToken;
 import com.praneeth.identityservice.entity.Role;
 import com.praneeth.identityservice.entity.User;
@@ -23,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -42,13 +40,20 @@ public class AuthService {
         this.eventPublisher = eventPublisher;
         this.userMapper = userMapper;
     }
-
+    @Transactional
     public String requestRegistration(RegistrationEmailRequest registrationEmailRequest) {
 
         String email = registrationEmailRequest.getEmail().trim().toLowerCase(Locale.ROOT);
         if(userRepository.existsByEmail(email)) {
             return "The email already exists";
         }
+        List<RegistrationToken> existingTokens =
+                registrationTokenRepository
+                        .findAllByEmailAndUsedFalse(email);
+
+        existingTokens.forEach(token -> token.setUsed(true));
+
+        registrationTokenRepository.saveAll(existingTokens);
         String rawToken = UUID.randomUUID().toString();
 
         RegistrationToken registrationToken = new RegistrationToken();
@@ -175,5 +180,59 @@ public class AuthService {
         }
 
         return "Welcome to the ShortUrl application";
+    }
+    @Transactional(readOnly = true)
+    public RegistrationTokenResponse validateRegistrationToken(
+            String rawToken
+    ) {
+        if (rawToken == null || rawToken.isBlank()) {
+            return new RegistrationTokenResponse(
+                    false,
+                    null,
+                    null,
+                    "Registration token is required"
+            );
+        }
+
+        String tokenHash = hashToken(rawToken);
+
+        RegistrationToken registrationToken =
+                registrationTokenRepository
+                        .findByTokenHash(tokenHash)
+                        .orElse(null);
+
+        if (registrationToken == null) {
+            return new RegistrationTokenResponse(
+                    false,
+                    null,
+                    null,
+                    "Invalid registration link"
+            );
+        }
+
+        if (registrationToken.isUsed()) {
+            return new RegistrationTokenResponse(
+                    false,
+                    null,
+                    registrationToken.getExpiresAt(),
+                    "This registration link has already been used"
+            );
+        }
+
+        if (registrationToken.getExpiresAt().isBefore(Instant.now())) {
+            return new RegistrationTokenResponse(
+                    false,
+                    null,
+                    registrationToken.getExpiresAt(),
+                    "This registration link has expired"
+            );
+        }
+
+        return new RegistrationTokenResponse(
+                true,
+                registrationToken.getEmail(),
+                registrationToken.getExpiresAt(),
+                "Registration link is valid"
+        );
     }
 }

@@ -1,16 +1,10 @@
 package com.praneeth.identityservice.controller;
 
-import com.praneeth.identityservice.dto.CompleteRegistrationRequest;
-import com.praneeth.identityservice.dto.LoginRequest;
-import com.praneeth.identityservice.dto.RegistrationEmailRequest;
-import com.praneeth.identityservice.dto.UserResponse;
+import com.praneeth.identityservice.dto.*;
 import com.praneeth.identityservice.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -20,11 +14,12 @@ public class AuthController {
         this.authService = authService;
     }
     @PostMapping("/registration/request")
-    public ResponseEntity<String> requestRegistration(
+    public ResponseEntity<MessageResponse> requestRegistration(
             @Valid @RequestBody RegistrationEmailRequest request
     ) {
+        String message= authService.requestRegistration(request);
         return ResponseEntity.accepted()
-                .body(authService.requestRegistration(request));
+                .body(new  MessageResponse(message));
     }
     @PostMapping("/registration/complete")
     public ResponseEntity<UserResponse> completeRegistration(@Valid @RequestBody CompleteRegistrationRequest request){
@@ -36,6 +31,15 @@ public class AuthController {
 
         return ResponseEntity.ok(
                 authService.login(request)
+        );
+    }
+    @GetMapping("/registration/validate")
+    public ResponseEntity<RegistrationTokenResponse>
+    validateRegistrationToken(
+            @RequestParam String token
+    ) {
+        return ResponseEntity.ok(
+                authService.validateRegistrationToken(token)
         );
     }
 }
