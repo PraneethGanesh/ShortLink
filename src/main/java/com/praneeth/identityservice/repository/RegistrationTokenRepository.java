@@ -4,6 +4,7 @@ import com.praneeth.identityservice.entity.RegistrationToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 public interface RegistrationTokenRepository
@@ -14,6 +15,7 @@ public interface RegistrationTokenRepository
     Optional<RegistrationToken> findTopByEmailOrderByCreatedAtDesc(
             String email
     );
+    List<RegistrationToken> findAllByEmailAndUsedFalse(String email);
 
     void deleteByExpiresAtBefore(Instant time);
 }

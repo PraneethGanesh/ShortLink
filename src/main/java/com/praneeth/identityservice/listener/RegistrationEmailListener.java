@@ -1,6 +1,7 @@
 package com.praneeth.identityservice.listener;
 
 import com.praneeth.identityservice.event.RegistrationRequestedEvent;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,12 +10,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class RegistrationEmailListener {
     private final JavaMailSender mailSender;
+    @Value("${application.frontend.registration-url}")
+    private String registrationURL;
     public RegistrationEmailListener(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
     @EventListener
     public void handleRegistrationRequest(RegistrationRequestedEvent event){
-        String registrationLink="http://localhost:8190/api/v1/auth/registration/complete?token="+event.token();
+        String registrationLink=registrationURL+"?token="+event.token();
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(event.email());
         message.setSubject("Complete your registration ");
