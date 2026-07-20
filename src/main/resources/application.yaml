@@ -30,7 +30,7 @@ server:
   port: 8190
 application:
   frontend:
-    registration-url: ${FRONTEND_REGISTRATION_URL:http://localhost:5173/complete-registration}
+    registration-url: ${FRONTEND_REGISTRATION_URL:http://localhost:5173/register/complete}
   security:
     jwt:
       secret: ${JWT_SECRET}
