@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ShortLink Full Application" type="CompoundRunConfigurationType">
+    <toRun name="API Gateway" type="SpringBootApplicationConfigurationType" />
+    <toRun name="Identity Service" type="SpringBootApplicationConfigurationType" />
+    <toRun name="URL Service" type="SpringBootApplicationConfigurationType" />
+    <toRun name="React frontend" type="js.build_tools.npm" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="URL Service" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="urlservice" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.praneeth.urlservice.UrlserviceApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
