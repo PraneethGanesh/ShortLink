@@ -9,6 +9,7 @@ import com.praneeth.identityservice.event.RegistrationRequestedEvent;
 import com.praneeth.identityservice.mapper.UserMapper;
 import com.praneeth.identityservice.repository.RegistrationTokenRepository;
 import com.praneeth.identityservice.repository.UserRepository;
+import com.praneeth.identityservice.security.JwtService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,14 +32,16 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher eventPublisher;
     private final UserMapper userMapper;
+    private final JwtService jwtService;
     public AuthService(UserRepository userRepository, RegistrationTokenRepository registrationTokenRepository
     , PasswordEncoder passwordEncoder, ApplicationEventPublisher eventPublisher,
-                       UserMapper userMapper) {
+                       UserMapper userMapper, JwtService jwtService) {
         this.userRepository = userRepository;
         this.registrationTokenRepository =  registrationTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.eventPublisher = eventPublisher;
         this.userMapper = userMapper;
+        this.jwtService = jwtService;
     }
     @Transactional
     public String requestRegistration(RegistrationEmailRequest registrationEmailRequest) {
@@ -143,7 +146,7 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public String login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request) {
 
         String email = request.getEmail()
                 .trim()
@@ -178,8 +181,14 @@ public class AuthService {
                     "This account is not active"
             );
         }
+        String accessToken = jwtService.generateToken(user);
 
-        return "Welcome to the ShortUrl application";
+        return new AuthResponse(
+                accessToken,
+                "Bearer",
+                jwtService.getAccessTokenExpirationSeconds(),
+                userMapper.toResponse(user)
+        );
     }
     @Transactional(readOnly = true)
     public RegistrationTokenResponse validateRegistrationToken(
