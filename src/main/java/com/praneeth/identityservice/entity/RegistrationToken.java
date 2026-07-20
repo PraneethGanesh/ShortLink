@@ -12,10 +12,10 @@ public class RegistrationToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 320)
     private String email;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 64)
     private String tokenHash;
 
     @Column(nullable = false)
@@ -24,6 +24,7 @@ public class RegistrationToken {
     @Column(nullable = false)
     private boolean used;
 
+    @Column(nullable = false)
     private Instant createdAt;
 
     public Long getId() {

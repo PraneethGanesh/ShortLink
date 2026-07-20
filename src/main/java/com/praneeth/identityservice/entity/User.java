@@ -5,6 +5,15 @@ import jakarta.persistence.*;
 import java.time.Instant;
 
 @Entity
+@Table(
+        name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_users_email",
+                        columnNames = "email"
+                )
+        }
+)
 public class User {
 
     @Id
@@ -12,7 +21,7 @@ public class User {
     private String userId;
     @Column(nullable=false)
     private String name;
-    @Column(nullable=false, unique=true)
+    @Column(nullable = false, length = 320)
     private String email;
     @Column(nullable=false)
     private String passwordHash;
