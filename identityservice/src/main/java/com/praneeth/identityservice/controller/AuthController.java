@@ -42,4 +42,26 @@ public class AuthController {
                 authService.validateRegistrationToken(token)
         );
     }
+    @PostMapping("/2fa/setup")
+    public ResponseEntity<TotpSetupResponse> setupTotp(
+            @RequestHeader("X-User-Email") String email
+    ) {
+        return ResponseEntity.ok(authService.setupTotp(email));
+    }
+
+    @PostMapping("/2fa/enable")
+    public ResponseEntity<TotpStatusResponse> enableTotp(
+            @RequestHeader("X-User-Email") String email,
+            @Valid @RequestBody TotpVerificationRequest request
+    ) {
+        return ResponseEntity.ok(authService.enableTotp(email, request));
+    }
+
+    @PostMapping("/2fa/disable")
+    public ResponseEntity<TotpStatusResponse> disableTotp(
+            @RequestHeader("X-User-Email") String email,
+            @Valid @RequestBody TotpVerificationRequest request
+    ) {
+        return ResponseEntity.ok(authService.disableTotp(email, request));
+    }
 }

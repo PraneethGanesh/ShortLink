@@ -4,6 +4,15 @@ public record AuthResponse(
         String accessToken,
         String tokenType,
         long expiresIn,
-        UserResponse user
+        UserResponse user,
+        boolean twoFactorRequired
 ) {
+    public AuthResponse(
+            String accessToken,
+            String tokenType,
+            long expiresIn,
+            UserResponse user
+    ) {
+        this(accessToken, tokenType, expiresIn, user, false);
+    }
 }

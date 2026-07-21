@@ -1,4 +1,15 @@
 spring:
+  cloud:
+    zookeeper:
+      enabled: false
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: test-client
+            client-secret: test-secret
+            scope: read:user,user:email
   datasource:
     url: jdbc:h2:mem:identityservice_test;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
@@ -13,11 +24,13 @@ spring:
     port: 2525
     username: test
     password: test
-
 application:
   frontend:
     registration-url: http://localhost:5173/register/complete
+    oauth-success-url: http://localhost:5173/login
   security:
     jwt:
-      secret: test-secret-key-for-jwt-signing-that-is-long-enough
+      secret: test-secret-key-with-at-least-32-characters
       access-token-expiration: 86400000
+  totp:
+    issuer: ShortLinkTest

@@ -1,6 +1,14 @@
 spring:
   application:
     name: urlservice
+  cloud:
+    zookeeper:
+      enabled: ${ZOOKEEPER_ENABLED:false}
+      connect-string: ${ZOOKEEPER_CONNECT:localhost:2181}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
   datasource:
     url: ${DB_URL:jdbc:mysql://localhost:3306/shortlink_url_db?createDatabaseIfNotExist=true}
     username: ${DB_USERNAME:root}
@@ -19,7 +27,9 @@ management:
     web:
       exposure:
         include: health,info
+
 application:
   short-url:
     base-url: ${SHORT_URL_BASE_URL:http://localhost:8191}
     code-length: 7
+    redirect-cache-ttl-seconds: ${REDIRECT_CACHE_TTL_SECONDS:300}

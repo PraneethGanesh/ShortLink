@@ -10,6 +10,7 @@ public class UserResponse {
     private String role;
     private String status;
     private boolean enabled;
+    private boolean totpEnabled;
     private Instant createdAt;
 
     public String getUserId() {
@@ -58,6 +59,14 @@ public class UserResponse {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean isTotpEnabled() {
+        return totpEnabled;
+    }
+
+    public void setTotpEnabled(boolean totpEnabled) {
+        this.totpEnabled = totpEnabled;
     }
 
     public Instant getCreatedAt() {
