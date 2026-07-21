@@ -17,6 +17,8 @@ public interface UserMapper {
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "enabled", ignore = true)
+    @Mapping(target = "totpSecret", ignore = true)
+    @Mapping(target = "totpEnabled", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     User toEntity(CompleteRegistrationRequest request);
 }

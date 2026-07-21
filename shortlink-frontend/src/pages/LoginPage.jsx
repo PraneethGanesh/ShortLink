@@ -1,24 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Link,
     useLocation,
     useNavigate,
+    useSearchParams,
 } from "react-router-dom";
-import { login } from "../api/authApi";
+import { login, storeToken } from "../api/authApi";
 import "./RequestRegistrationPage.css";
 
 export default function LoginPage() {
     const navigate = useNavigate();
     const location = useLocation();
+    const [searchParams] = useSearchParams();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [totpCode, setTotpCode] = useState("");
+    const [twoFactorRequired, setTwoFactorRequired] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
     const successMessage = location.state?.message;
     const previousLocation =
         location.state?.from?.pathname || "/dashboard";
+
+    useEffect(() => {
+        const oauthToken = searchParams.get("token");
+        if (oauthToken) {
+            storeToken(oauthToken);
+            navigate("/dashboard", { replace: true });
+        }
+    }, [navigate, searchParams]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -29,13 +41,25 @@ export default function LoginPage() {
             return;
         }
 
+        if (twoFactorRequired && !totpCode.trim()) {
+            setError("Enter your two-factor authentication code.");
+            return;
+        }
+
         setLoading(true);
 
         try {
-            await login({
+            const response = await login({
                 email: email.trim(),
                 password,
+                totpCode: totpCode.trim() || null,
             });
+
+            if (response.twoFactorRequired) {
+                setTwoFactorRequired(true);
+                setTotpCode("");
+                return;
+            }
 
             navigate(previousLocation, {
                 replace: true,
@@ -83,7 +107,7 @@ export default function LoginPage() {
                             onChange={(event) =>
                                 setEmail(event.target.value)
                             }
-                            disabled={loading}
+                            disabled={loading || twoFactorRequired}
                             autoComplete="email"
                         />
                     </div>
@@ -104,19 +128,51 @@ export default function LoginPage() {
                             onChange={(event) =>
                                 setPassword(event.target.value)
                             }
-                            disabled={loading}
+                            disabled={loading || twoFactorRequired}
                             autoComplete="current-password"
                         />
                     </div>
+
+                    {twoFactorRequired && (
+                        <div className="auth-field">
+                            <label
+                                className="auth-label"
+                                htmlFor="totpCode"
+                            >
+                                2FA code
+                            </label>
+
+                            <input
+                                id="totpCode"
+                                type="text"
+                                inputMode="numeric"
+                                className="auth-input"
+                                value={totpCode}
+                                onChange={(event) =>
+                                    setTotpCode(event.target.value)
+                                }
+                                disabled={loading}
+                                autoComplete="one-time-code"
+                                maxLength={6}
+                            />
+                        </div>
+                    )}
 
                     <button
                         type="submit"
                         className="auth-submit"
                         disabled={loading}
                     >
-                        {loading ? "Signing in…" : "Sign in"}
+                        {loading ? "Signing in..." : twoFactorRequired ? "Verify code" : "Sign in"}
                     </button>
                 </form>
+
+                <a
+                    className="auth-submit github-login-button"
+                    href="http://localhost:8080/oauth2/authorization/github"
+                >
+                    Sign in with GitHub
+                </a>
 
                 {error && (
                     <div

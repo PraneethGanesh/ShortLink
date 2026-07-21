@@ -1,6 +1,39 @@
 spring:
   application:
     name: api-gateway
+  cloud:
+    zookeeper:
+      enabled: ${ZOOKEEPER_ENABLED:false}
+      connect-string: ${ZOOKEEPER_CONNECT:localhost:2181}
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: identityservice
+              uri: ${IDENTITY_SERVICE_URL:http://localhost:8190}
+              predicates:
+                - Path=/api/v1/auth/**,/api/v1/users/**
+            - id: identityservice-oauth
+              uri: ${IDENTITY_SERVICE_URL:http://localhost:8190}
+              predicates:
+                - Path=/oauth2/**,/login/oauth2/**
+            - id: urlservice-api
+              uri: ${URL_SERVICE_URL:http://localhost:8191}
+              predicates:
+                - Path=/api/v1/urls/**
+            - id: urlservice-redirect
+              uri: ${URL_SERVICE_URL:http://localhost:8191}
+              predicates:
+                - Path=/{shortCode}
+            - id: github-webhooks
+              uri: ${IDENTITY_SERVICE_URL:http://localhost:8190}
+              predicates:
+                - Path=/api/v1/github/webhooks
 
 server:
   port: 8080
+
+application:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:dev-secret-key-with-at-least-32-characters}

@@ -1,6 +1,18 @@
 spring:
   application:
     name: identityservice
+  cloud:
+    zookeeper:
+      enabled: ${ZOOKEEPER_ENABLED:false}
+      connect-string: ${ZOOKEEPER_CONNECT:localhost:2181}
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${GITHUB_CLIENT_ID:disabled-client-id}
+            client-secret: ${GITHUB_CLIENT_SECRET:disabled-client-secret}
+            scope: read:user,user:email
   datasource:
     url: ${DB_URL:jdbc:mysql://localhost:3306/identity_db?createDatabaseIfNotExist=true}
     username: ${DB_USERNAME:root}
@@ -28,10 +40,14 @@ spring:
 
 server:
   port: 8190
+
 application:
   frontend:
     registration-url: ${FRONTEND_REGISTRATION_URL:http://localhost:5173/register/complete}
+    oauth-success-url: ${FRONTEND_OAUTH_SUCCESS_URL:http://localhost:5173/login}
   security:
     jwt:
       secret: ${JWT_SECRET}
       access-token-expiration: 86400000
+  totp:
+    issuer: ${TOTP_ISSUER:ShortLink}
