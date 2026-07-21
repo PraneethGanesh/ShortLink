@@ -18,7 +18,7 @@ public class RedirectController {
         this.shortUrlService = shortUrlService;
     }
 
-    @GetMapping("/{shortCode:[a-zA-Z0-9_-]+}")
+    @GetMapping("/s/{shortCode:[a-zA-Z0-9_-]+}")
     public ResponseEntity<Void> redirect(@PathVariable String shortCode) {
         String longUrl = shortUrlService.resolveRedirectUrl(shortCode);
 
