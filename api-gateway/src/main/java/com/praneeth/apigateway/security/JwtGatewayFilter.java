@@ -27,6 +27,7 @@ public class JwtGatewayFilter extends OncePerRequestFilter {
             "/api/v1/auth/registration/validate",
             "/api/v1/auth/registration/complete",
             "/api/v1/auth/login",
+            "/api/v1/github/webhooks",
             "/actuator/health"
     );
 

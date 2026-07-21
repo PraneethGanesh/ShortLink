@@ -30,6 +30,6 @@ management:
 
 application:
   short-url:
-    base-url: ${SHORT_URL_BASE_URL:http://localhost:8191}
+    base-url: ${SHORT_URL_BASE_URL:http://localhost:8080/s}
     code-length: 7
     redirect-cache-ttl-seconds: ${REDIRECT_CACHE_TTL_SECONDS:300}
