@@ -51,3 +51,5 @@ application:
       access-token-expiration: 86400000
   totp:
     issuer: ${TOTP_ISSUER:ShortLink}
+  github:
+    webhook-secret: ${GITHUB_WEBHOOK_SECRET}

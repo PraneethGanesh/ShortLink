@@ -1,5 +1,7 @@
 package com.praneeth.identityservice.controller;
 
+import com.praneeth.identityservice.dto.GitHubWebhookResponse;
+import com.praneeth.identityservice.service.GitHubWebhookService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,15 +10,36 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/github")
 public class GitHubWebhookController {
 
-    @PostMapping(
-            value = "/webhooks",
-            consumes = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<String> receiveWebhook(
-            @RequestHeader("X-GitHub-Event") String event,
-            @RequestBody String payload
+    private final GitHubWebhookService webhookService;
+
+    public GitHubWebhookController(
+            GitHubWebhookService webhookService
     ) {
-        System.out.println("GitHub event received: " + event);
-        return ResponseEntity.ok("Webhook received");
+        this.webhookService = webhookService;
+    }
+
+    @PostMapping("/webhooks")
+    public ResponseEntity<GitHubWebhookResponse> receiveWebhook(
+            @RequestHeader("X-GitHub-Event")
+            String event,
+
+            @RequestHeader("X-GitHub-Delivery")
+            String deliveryId,
+
+            @RequestHeader("X-Hub-Signature-256")
+            String signature,
+
+            @RequestBody
+            byte[] payload
+    ) {
+        GitHubWebhookResponse response =
+                webhookService.process(
+                        event,
+                        deliveryId,
+                        signature,
+                        payload
+                );
+
+        return ResponseEntity.ok(response);
     }
 }

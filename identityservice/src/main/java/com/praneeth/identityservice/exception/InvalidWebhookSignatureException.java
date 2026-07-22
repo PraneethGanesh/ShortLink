@@ -1,0 +1,7 @@
+package com.praneeth.identityservice.exception;
+
+public class InvalidWebhookSignatureException extends RuntimeException {
+    public InvalidWebhookSignatureException(String message) {
+        super(message);
+    }
+}
